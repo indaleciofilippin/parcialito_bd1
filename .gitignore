@@ -1,0 +1,17 @@
+# Entorno y secretos (NUNCA subir)
+.venv/
+config.json
+setup/crear_usuario.sql
+logs/
+__pycache__/
+*.pyc
+.dev/
+.claude/
+.DS_Store
+subir_a_github/
+
+# Material de la cátedra (no hace falta para la app)
+*.pdf
+*.docx
+*.jpeg
+*.jpg
