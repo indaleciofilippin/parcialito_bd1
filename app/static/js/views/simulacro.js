@@ -93,7 +93,8 @@ Vistas.simulacro = {
           <span class="spacer"></span>
           <button class="btn sm" :disabled="actual === 0" @click="ir(actual - 1)"><ico n="left" c="sm"/></button>
           <button class="btn sm" :disabled="actual === s.ejercicios.length - 1" @click="ir(actual + 1)">Siguiente <ico n="right" c="sm"/></button>
-          <button class="btn sm" :class="{primary: drawer}" @click="drawer = !drawer"><ico n="database" c="sm"/> Esquema</button>
+          <button class="btn sm" :class="{primary: U.store.derAbierto}" @click="U.toggleDer()" title="Ver el diagrama entidad-relación mientras resolvés"><ico n="layers" c="sm"/> DER</button>
+          <button class="btn sm" :class="{primary: drawer}" @click="drawer = !drawer"><ico n="database" c="sm"/> Tablas</button>
         </div>
         <sql-editor ref="ed" v-model="resp[ej.id]" placeholder="-- Tu respuesta" @run="ejecutar"/>
         <div class="hsplit" v-split="{var: '--edh', eje: 'y', min: 18, max: 80, offset: 52}"></div>

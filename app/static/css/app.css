@@ -621,3 +621,37 @@ table.dg td.chg { background: var(--warning-soft); font-weight: 650; }
 .user-chip .avatar { display: grid; place-items: center; background: #6366f1; color: #fff; font-weight: 700; font-size: 13px; }
 .user-chip .un { color: #fff; font-size: 12.5px; font-weight: 650; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .user-chip .ue { color: var(--sidebar-muted); font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* ==== Autocompletado ==== */
+.CodeMirror-hints.parc { width: max-content; min-width: 250px; max-width: min(640px, 92vw); max-height: 300px; overflow-y: auto; padding: 4px; }
+.CodeMirror-hints.parc li.CodeMirror-hint.ac-item { display: flex; align-items: center; gap: 8px; padding: 3px 9px 3px 5px; white-space: nowrap; line-height: 1.5; color: var(--text); }
+.CodeMirror-hints.parc li.CodeMirror-hint-active.ac-item { background: color-mix(in srgb, var(--primary) 16%, var(--surface)); box-shadow: inset 2px 0 0 var(--primary); color: var(--text); }
+.ac-item .ac-ico { flex: none; box-sizing: border-box; min-width: 34px; height: 17px; padding: 0 4px; border-radius: 5px; display: inline-flex; align-items: center; justify-content: center;
+  font: 700 9px/1 var(--font); letter-spacing: .04em; color: var(--ac-c, var(--muted));
+  background: color-mix(in srgb, var(--ac-c, var(--muted)) 14%, transparent); border: 1px solid color-mix(in srgb, var(--ac-c, var(--muted)) 30%, transparent); }
+.ac-item .ac-txt { flex: 0 0 auto; max-width: calc(100% - 42px); overflow: hidden; text-overflow: ellipsis; color: var(--text); }
+.ac-item .ac-txt b { font-weight: 700; color: var(--primary-text); }
+.ac-item .ac-det { flex: 0 1000 auto; min-width: 0; margin-left: auto; padding-left: 18px; overflow: hidden; text-overflow: ellipsis; font: 11px/1.5 var(--font); color: var(--muted); }
+.ac-k-tabla { --ac-c: var(--info); }
+.ac-k-vista, .ac-k-cte { --ac-c: var(--success); }
+.ac-k-col { --ac-c: var(--cm-builtin); }
+.ac-k-pk { --ac-c: var(--warning); }
+.ac-k-fk { --ac-c: var(--c-subconsultas); }
+.ac-k-func { --ac-c: var(--cm-number); }
+.ac-k-kw { --ac-c: var(--cm-keyword); }
+.ac-k-join { --ac-c: var(--primary); }
+.ac-k-enum { --ac-c: var(--cm-string); }
+.ac-k-alias { --ac-c: var(--muted); }
+.ac-k-join .ac-txt, .ac-k-enum .ac-txt { font-weight: 500; }
+
+/* ==== DER flotante ==== */
+.der-float { position: fixed; z-index: 40; display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--border-strong); border-radius: 14px; box-shadow: var(--shadow-lg); overflow: hidden; min-width: 320px; min-height: 220px; animation: pop .18s ease; }
+.der-float-h { display: flex; align-items: center; gap: 6px; padding: 6px 8px 6px 12px; border-bottom: 1px solid var(--border); background: var(--surface-2); cursor: move; user-select: none; flex: none; }
+.der-float-h b { font-size: 13px; }
+.der-float-h .der-ayuda { margin-left: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.der-float-h .icon-btn { width: 28px; height: 28px; cursor: pointer; }
+.der-float-b { flex: 1; overflow: auto; cursor: grab; background-color: var(--bg); background-image: radial-gradient(var(--border) 1px, transparent 1px); background-size: 18px 18px; }
+.der-float-b.paneando { cursor: grabbing; }
+.der-float-b .er-table { cursor: pointer; }
+.der-float-b .er-col:hover { background: var(--primary-soft); color: var(--primary-text); }
+.der-float-r { position: absolute; right: 0; bottom: 0; width: 18px; height: 18px; cursor: nwse-resize; background: linear-gradient(135deg, transparent 50%, var(--border-strong) 50%, var(--border-strong) 60%, transparent 60%, transparent 70%, var(--border-strong) 70%, var(--border-strong) 80%, transparent 80%); }

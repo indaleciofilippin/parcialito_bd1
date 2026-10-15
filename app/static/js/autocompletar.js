@@ -360,12 +360,22 @@
       }
     }
 
-    // FROM / JOIN / UPDATE / INTO
+    // FROM / JOIN / UPDATE / INTO (y comas de la lista del FROM después de un JOIN ... ON/USING)
     for (let i = 0; i < toks.length; i++) {
       const t = toks[i];
-      if (t.t !== "w") continue;
       let coma;
-      if (t.u === "FROM") { if (dentroDeFuncionEspecial(A, t)) continue; coma = true; }
+      if (esP(t, ",")) {
+        let cl = null;
+        for (let k = i - 1; k >= 0; k--) {
+          const x = toks[k];
+          if (x.g !== t.g) continue;
+          if (x.sg !== t.sg) break;
+          if (x.t === "w" && CLAUSULAS.has(x.u)) { cl = x.u; break; }
+        }
+        if (cl !== "ON" && cl !== "USING" && cl !== "JOIN" && cl !== "STRAIGHT_JOIN") continue;
+        coma = false;
+      } else if (t.t !== "w") continue;
+      else if (t.u === "FROM") { if (dentroDeFuncionEspecial(A, t)) continue; coma = true; }
       else if (t.u === "JOIN" || t.u === "STRAIGHT_JOIN") coma = false;
       else if (t.u === "UPDATE") { if (esPal(toks[i - 1], "KEY")) continue; coma = true; }
       else if (t.u === "INTO") coma = false;
@@ -374,7 +384,7 @@
       while (j < toks.length) {
         const a = toks[j];
         if (!a || a.g !== t.g) break;
-        const ref = { kw: t.u, g: t.g, sg: t.sg, i: j, nombre: null, alias: null, tipo: null };
+        const ref = { kw: t.t === "p" ? "FROM" : t.u, g: t.g, sg: t.sg, i: j, nombre: null, alias: null, tipo: null };
         if (esP(a, "(")) {
           const g = a.hijo, cierra = grupos[g].cierra;
           ref.tipo = "derivada";
@@ -572,6 +582,7 @@
     const lista = KW_TRAS_TABLA[cl === "STRAIGHT_JOIN" ? "JOIN" : cl] || KW_TRAS_TABLA.FROM;
     if (n === 0) return { contexto: "tabla", clausula: cl };
     if (ult.t === "w" && MODIF_JOIN.has(ult.u)) return { contexto: "palabras", lista: ["JOIN", "OUTER JOIN"], clausula: cl };
+    if (ult.t === "w" && (ult.u === "GROUP" || ult.u === "ORDER")) return { contexto: "palabras", lista: ["BY"], clausula: cl };
     if (n === 1) return { contexto: "palabras", lista: ["AS"].concat(lista), min: 3, clausula: cl };
     if (esPal(ult, "AS")) return { contexto: "alias", clausula: cl };
     return { contexto: "palabras", lista, min: 3, clausula: cl };
@@ -650,8 +661,11 @@
         return seg.length ? expresion(nivel, null) : { contexto: "palabras", lista: ["SELECT", "WITH"], min: 0 };
       case "ON":
         if (!seg.length) return { contexto: "join_on", on: nivel[k], clausula: cl };
+        if (seg.some((t) => esP(t, ","))) return contextoFrom("FROM", seg); // ... ON a.x = b.x, otra_tabla
         return expresion(nivel, cl);
-      case "USING": case "LIMIT": case "OFFSET": case "VALUES":
+      case "USING":
+        return seg.some((t) => esP(t, ",")) ? contextoFrom("FROM", seg) : { contexto: "nada" };
+      case "LIMIT": case "OFFSET": case "VALUES":
         return { contexto: "nada" };
       case "DELETE":
         return { contexto: "palabras", lista: ["FROM"] };
@@ -1115,6 +1129,7 @@
       el.appendChild(det);
     }
     if (it.titulo) el.title = it.titulo;
+    else if (d.length > 26) el.title = d + (it.detalle ? "  ·  " + it.detalle : "");
   }
 
   function aplicar(cm, data, comp) {
@@ -1174,9 +1189,10 @@
 
   function alEscribir(cm, ch) {
     if (ch.origin !== "+input" || cm.getOption("readOnly")) return;
-    if (ch.text.length !== 1 || ch.text[0].length !== 1) return;
+    // una sola línea; puede llegar más de un carácter junto (CodeMirror agrupa la entrada rápida)
+    if (ch.text.length !== 1 || !ch.text[0]) return;
     if (cm.somethingSelected() || cm.listSelections().length > 1) return;
-    const c = ch.text[0];
+    const c = ch.text[0].slice(-1);
     if (WCH.test(c)) {
       if (cm.state.completionActive) return; // la lista abierta se actualiza sola
       const cur = cm.getCursor(), antes = cm.getLine(cur.line).slice(0, cur.ch);
@@ -1199,10 +1215,11 @@
     cm.on("inputRead", (c, ch) => {
       try { alEscribir(c, ch); } catch (e) { if (window.console) console.warn("[autocompletar]", e); }
     });
-    // closebrackets inserta '' sin pasar por inputRead: detectar la comilla de apertura acá
+    // closebrackets inserta '' con replaceSelection (origin "+input") sin pasar por inputRead:
+    // detectar la comilla de apertura acá
     cm.on("change", (c, ch) => {
       try {
-        if (ch.origin == null && ch.text.length === 1 && (ch.text[0] === "''" || ch.text[0] === '""') && !ch.removed.join("")) {
+        if ((ch.origin == null || ch.origin === "+input") && ch.text.length === 1 && (ch.text[0] === "''" || ch.text[0] === '""') && !ch.removed.join("")) {
           abrirSiHay(c, ["enum"]);
         }
       } catch (e) { if (window.console) console.warn("[autocompletar]", e); }

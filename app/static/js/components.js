@@ -67,10 +67,15 @@ window.registrarComponentes = function (app) {
     setup(props, { emit, expose }) {
       const el = ref(null);
       let cm = null;
+      // Autocompletado inteligente (js/autocompletar.js); si no cargó, se usa el sql-hint estándar
+      const AC = window.Autocompletar || null;
       function tablasHint() {
         const t = {};
         if (store.esquema) for (const [k, v] of Object.entries(store.esquema.columnas)) t[k] = v;
         return t;
+      }
+      function opcionesHint() {
+        return AC ? { hint: AC.hint, completeSingle: false } : { tables: tablasHint(), completeSingle: false };
       }
       onMounted(async () => {
         if (!store.esquema) { try { await U.cargarEsquema(); } catch (e) {} }
@@ -87,7 +92,7 @@ window.registrarComponentes = function (app) {
           lineWrapping: false,
           readOnly: props.readonly,
           placeholder: props.placeholder || "",
-          hintOptions: { tables: tablasHint(), completeSingle: false },
+          hintOptions: opcionesHint(),
           extraKeys: {
             "Cmd-Enter": () => emit("run"),
             "Ctrl-Enter": () => emit("run"),
@@ -105,14 +110,22 @@ window.registrarComponentes = function (app) {
           const v = cm.getValue();
           if (v !== props.modelValue) emit("update:modelValue", v);
         });
-        cm.on("inputRead", (c, ch) => {
-          if (ch.origin !== "+input") return;
-          const txt = ch.text[0];
-          if (/^[\w.]$/.test(txt)) {
-            const tok = c.getTokenAt(c.getCursor());
-            if (tok.string.length >= 2 || txt === ".") c.showHint({ completeSingle: false });
-          }
-        });
+        // el DER flotante inserta nombres en el último editor usado
+        U.editorActivo = cm;
+        cm.on("focus", () => { U.editorActivo = cm; });
+        if (AC) {
+          // disparo automático: identificadores (≥2 letras, ≥1 tras '.'), espacio tras FROM/JOIN/ON/INTO/UPDATE, comilla en ENUM
+          AC.instalar(cm);
+        } else {
+          cm.on("inputRead", (c, ch) => {
+            if (ch.origin !== "+input") return;
+            const txt = ch.text[0];
+            if (/^[\w.]$/.test(txt)) {
+              const tok = c.getTokenAt(c.getCursor());
+              if (tok.string.length >= 2 || txt === ".") c.showHint({ completeSingle: false });
+            }
+          });
+        }
         setTimeout(() => cm.refresh(), 30);
       });
       watch(() => props.modelValue, (v) => {
@@ -122,8 +135,14 @@ window.registrarComponentes = function (app) {
           cm.setCursor(cur);
         }
       });
-      watch(() => store.esquema, () => { if (cm) cm.setOption("hintOptions", { tables: tablasHint(), completeSingle: false }); });
-      onBeforeUnmount(() => { cm = null; });
+      // (con Autocompletar el esquema se lee en cada sugerencia, no hace falta reconfigurar)
+      watch(() => store.esquema, () => { if (cm && !AC) cm.setOption("hintOptions", opcionesHint()); });
+      onBeforeUnmount(() => {
+        // si quedó abierta la lista de sugerencias (se cuelga del <body>), cerrarla al cambiar de vista
+        try { if (cm && cm.closeHint) cm.closeHint(); } catch (e) {}
+        if (U.editorActivo === cm) U.editorActivo = null;
+        cm = null;
+      });
       expose({
         insertar(texto) { if (!cm) return; cm.replaceSelection(texto); cm.focus(); },
         foco() { cm && cm.focus(); },

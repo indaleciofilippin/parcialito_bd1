@@ -25,6 +25,7 @@ Vistas.consola = {
       <div class="toolbar">
         <button class="btn primary" @click="ejecutar" :disabled="cargando"><ico n="play" c="sm"/> {{ haySel ? 'Ejecutar selección' : 'Ejecutar' }} <span class="kbd">⌘↵</span></button>
         <button class="btn ghost sm" @click="$refs.ed.formatear()"><ico n="sparkles" c="sm"/> Formatear</button>
+        <button class="btn sm" :class="{primary: U.store.derAbierto}" @click="U.toggleDer()" title="Ver el diagrama entidad-relación"><ico n="layers" c="sm"/> DER</button>
         <span class="spacer"></span>
         <label v-if="!U.store.multiusuario" class="toggle" :class="{on: guardar}" @click="guardar = !guardar" title="Apagado: INSERT/UPDATE/DELETE se deshacen al terminar. Encendido: los cambios quedan guardados en tu base de práctica.">
           <span class="sw"></span> Guardar cambios

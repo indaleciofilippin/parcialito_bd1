@@ -113,7 +113,8 @@ Vistas.ejercicio = {
           <span class="spacer"></span>
           <label v-if="ej.tipo === 'dml'" class="toggle" :class="{on: U.store.safeUpdates}" @click="toggleSafe" title="Simula el modo Safe Updates de Workbench (error 1175 si el WHERE no usa una clave)"><span class="sw"></span> Safe updates</label>
           <span class="small faint" v-if="guardado">{{ guardado }}</span>
-          <button class="btn sm" :class="{primary: drawer}" @click="drawer = !drawer"><ico n="database" c="sm"/> Esquema</button>
+          <button class="btn sm" :class="{primary: U.store.derAbierto}" @click="U.toggleDer()" title="Ver el diagrama entidad-relación mientras resolvés"><ico n="layers" c="sm"/> DER</button>
+          <button class="btn sm" :class="{primary: drawer}" @click="drawer = !drawer"><ico n="database" c="sm"/> Tablas</button>
         </div>
         <sql-editor ref="ed" v-model="sql" :placeholder="placeholder" @run="ejecutar" @check="corregir" @save="guardar(true)"/>
         <div class="hsplit" v-split="{var: '--edh', eje: 'y', min: 18, max: 80, offset: 52}"></div>

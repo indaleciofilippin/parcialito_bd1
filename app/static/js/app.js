@@ -152,6 +152,7 @@
       <main class="main">
         <component :is="ruta.comp" v-bind="ruta.props"/>
       </main>
+      <der-flotante v-if="ruta.nombre !== 'esquema'"/>
     </div>
 
     <div class="toasts"><div v-for="t in U.store.toasts" :key="t.id" class="toast"><ico n="check" c="sm"/> {{ t.msg }}</div></div>

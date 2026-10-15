@@ -110,6 +110,9 @@ def autenticar():
         return None
     EJ.recargar_si_cambio()
     g.usuario = None
+    if not MULTI and os.environ.get("RENDER"):
+        # En internet nunca se abre sin login: falta configurar GOOGLE_CLIENT_ID en Render
+        return jsonify({"error": "Falta configurar GOOGLE_CLIENT_ID en Render (Environment).", "configuracion": True}), 503
     if not MULTI:
         g.uid, g.admin = 1, True
         return None

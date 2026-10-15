@@ -130,6 +130,7 @@
     safeUpdates: localStorage.getItem("parc-safe") === "1",
     consolaSql: null,
     necesitaLogin: false,
+    derAbierto: localStorage.getItem("parc-der-abierto") === "1",
     multiusuario: false,
     usuario: null,
     admin: true,
@@ -172,8 +173,20 @@
     navigator.clipboard.writeText(txt).then(() => toast("Copiado al portapapeles"));
   }
   function irA(hash) { location.hash = hash; }
+
+  // Inserta texto en el último editor SQL usado (lo usa el DER flotante)
+  function insertarEnEditor(texto) {
+    const cm = window.U && U.editorActivo;
+    if (!cm || !document.body.contains(cm.getWrapperElement())) { toast("Abrí un ejercicio o la consola para insertar"); return false; }
+    const cur = cm.getCursor();
+    const antes = cm.getRange({ line: cur.line, ch: Math.max(0, cur.ch - 1) }, cur);
+    const sep = antes && /[\w)]/.test(antes) && !cm.somethingSelected() ? " " : "";
+    cm.replaceSelection(sep + texto);
+    cm.focus();
+    return true;
+  }
   function fmtNum(n) { return (n || 0).toLocaleString("es-AR"); }
 
   window.U = { api, icon, md, mdInline, highlight, escapeHtml, store, setTema, toast, confirmar, cargarCatalogo, cargarEsquema,
-               SECC_ICON, TIPO_NOMBRE, seccion, copiar, irA, fmtNum };
+               SECC_ICON, TIPO_NOMBRE, seccion, copiar, irA, fmtNum, insertarEnEditor };
 })();
