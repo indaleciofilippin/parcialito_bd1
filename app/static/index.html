@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Parcialito BD</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><rect width='24' height='24' rx='6' fill='%236366f1'/><g fill='none' stroke='white' stroke-width='2'><ellipse cx='12' cy='7' rx='6' ry='2.4'/><path d='M6 7v10c0 1.3 2.7 2.4 6 2.4s6-1.1 6-2.4V7M6 12c0 1.3 2.7 2.4 6 2.4s6-1.1 6-2.4'/></g></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/vendor/cm/codemirror.css">
+  <link rel="stylesheet" href="/static/vendor/cm/show-hint.css">
+  <link rel="stylesheet" href="/static/css/app.css">
+  <script>document.documentElement.setAttribute("data-theme", localStorage.getItem("parc-tema") || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"));</script>
+</head>
+<body>
+  <div id="app" v-cloak></div>
+
+  <script src="/static/vendor/vue.global.prod.js"></script>
+  <script src="/static/vendor/cm/codemirror.js"></script>
+  <script src="/static/vendor/cm/sql.js"></script>
+  <script src="/static/vendor/cm/show-hint.js"></script>
+  <script src="/static/vendor/cm/sql-hint.js"></script>
+  <script src="/static/vendor/cm/matchbrackets.js"></script>
+  <script src="/static/vendor/cm/closebrackets.js"></script>
+  <script src="/static/vendor/cm/placeholder.js"></script>
+  <script src="/static/vendor/cm/active-line.js"></script>
+  <script src="/static/vendor/cm/comment.js"></script>
+  <script src="/static/vendor/cm/runmode.js"></script>
+  <script src="/static/vendor/sql-formatter.js"></script>
+  <script src="/static/vendor/marked.js"></script>
+  <script src="/static/vendor/confetti.js"></script>
+
+  <script src="/static/js/util.js"></script>
+  <script src="/static/js/components.js"></script>
+  <script src="/static/js/views/inicio.js"></script>
+  <script src="/static/js/views/ejercicio.js"></script>
+  <script src="/static/js/views/consola.js"></script>
+  <script src="/static/js/views/esquema.js"></script>
+  <script src="/static/js/views/machete.js"></script>
+  <script src="/static/js/views/simulacro.js"></script>
+  <script src="/static/js/views/progreso.js"></script>
+  <script src="/static/js/app.js"></script>
+</body>
+</html>

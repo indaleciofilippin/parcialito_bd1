@@ -1,0 +1,22 @@
+# Blueprint de Render: crea el servicio web gratuito de Parcialito BD.
+services:
+  - type: web
+    name: parcialito-bd
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app.wsgi:app --workers 1 --threads 8 --timeout 180 --bind 0.0.0.0:$PORT
+    healthCheckPath: /api/estado
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: DATABASE_URL        # "Service URI" de Aiven (mysql://avnadmin:...@...:.../defaultdb?ssl-mode=REQUIRED)
+        sync: false
+      - key: GOOGLE_CLIENT_ID    # ID de cliente OAuth (termina en .apps.googleusercontent.com)
+        sync: false
+      - key: SECRET_KEY
+        generateValue: true
+      - key: MAX_USUARIOS
+        value: "20"
+      - key: ADMIN_EMAILS
+        value: indafilippin@gmail.com

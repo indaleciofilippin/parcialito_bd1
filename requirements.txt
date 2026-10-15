@@ -1,0 +1,5 @@
+flask>=3.0
+pymysql>=1.1
+google-auth>=2.20
+requests>=2.31
+gunicorn>=21
